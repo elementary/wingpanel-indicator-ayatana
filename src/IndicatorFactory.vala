@@ -1,21 +1,21 @@
-// -*- Mode: vala; indent-tabs-mode: nil; tab-width: 4 -*-
-//
-//  Copyright (C) 2013 Wingpanel Developers
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*-
+ * Copyright (c) 2015 Wingpanel Developers (http://launchpad.net/wingpanel)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Library General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-public class AyanataCompatibility.IndicatorFactory : Object, IndicatorLoader {
+public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
     private Gee.Collection<IndicatorIface> indicators;
     private string[] settings_blacklist;
 
@@ -71,21 +71,18 @@ public class AyanataCompatibility.IndicatorFactory : Object, IndicatorLoader {
     private void load_indicator (File parent_dir, string name) {
         string indicator_path = parent_dir.get_child (name).get_path ();
 
-        try {
-            IndicatorAyatana.Object indicator = null;
+        IndicatorAyatana.Object indicator = null;
 
-            if (!name.has_suffix (".so"))
-                return;
+        if (!name.has_suffix (".so"))
+            return;
 
-            debug ("Loading Indicator Library: %s", name);
-            indicator = new IndicatorAyatana.Object.from_file (indicator_path);
+        debug ("Loading Indicator Library: %s", name);
+        indicator = new IndicatorAyatana.Object.from_file (indicator_path);
 
-            if (indicator != null)
-                indicators.add (new IndicatorObject (indicator, name));
-            else
-                debug ("Unable to load %s: invalid object.", name);
-        } catch (Error err) {
-            critical ("Could not load indicator at %s: %s", indicator_path, err.message);
-        }
+        if (indicator != null)
+            indicators.add (new IndicatorObject (indicator, name));
+        else
+            debug ("Unable to load %s: invalid object.", name);
+      
     }
 }

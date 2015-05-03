@@ -15,19 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-public class AyanataCompatibility.MetaIndicator : Wingpanel.Indicator {
+public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 
 	private IndicatorFactory indicator_loader;
 
 	public MetaIndicator () {
-		Object (code_name: "ayanata_compatibility",
-				display_name: _("Ayanata Compatibility"),
-				description:_("Ayanata Compatibility Meta Indicator"));
+		Object (code_name: "ayatana_compatibility",
+				display_name: _("Ayatana Compatibility"),
+				description:_("Ayatana Compatibility Meta Indicator"));
 
+		// should the blacklist be exposed?
 		var black = new string[] {};
 		indicator_loader = new IndicatorFactory (black);
-		visible = false;
+		
+		this.visible = false;
 		var indicators = indicator_loader.get_indicators ();
 
 		foreach (var indicator in indicators)
@@ -69,7 +70,7 @@ public class AyanataCompatibility.MetaIndicator : Wingpanel.Indicator {
 }
 
 public Wingpanel.Indicator get_indicator (Module module) {
-	debug ("Activating AyanataCompatibility Meta Indicator");
-	var indicator = new AyanataCompatibility.MetaIndicator ();
+	debug ("Activating AyatanaCompatibility Meta Indicator");
+	var indicator = new AyatanaCompatibility.MetaIndicator ();
 	return indicator;
 }

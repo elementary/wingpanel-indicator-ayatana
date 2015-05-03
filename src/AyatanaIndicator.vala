@@ -1,4 +1,21 @@
-public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
+/*-
+ * Copyright (c) 2015 Wingpanel Developers (http://launchpad.net/wingpanel)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Library General Public License as published by
+ * the Free Software Foundation, either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 	private IndicatorButton icon;
 
 	private Gtk.Grid main_grid;
@@ -13,13 +30,14 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 	const int MAX_ICON_SIZE = 24;
 
 	public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
-		Object (code_name: "%s%s".printf ("ayanata-", entry.name_hint),
-				display_name: "%s%s".printf ("ayanata-", entry.name_hint),
-				description:_("Ayanata Compatibility Indicator"));
+		Object (code_name: "%s%s".printf ("ayatana-", entry.name_hint),
+				display_name: "%s%s".printf ("ayatana-", entry.name_hint),
+				description: _("Ayatana compatibility indicator"));
 		this.entry = entry;
 		this.indicator = indicator;
 		this.parent_object = obj;
 		this.menu_map = new Gee.HashMap<Gtk.Widget,Gtk.Widget> ();
+
 		unowned string name_hint = entry.name_hint;
 		if (name_hint == null)
 		    warning ("NULL name hint");
@@ -39,12 +57,16 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 		// parent is still in the panel when the new one is added.
 		if (entry.menu.get_attach_widget () != null)
 		    entry.menu.detach ();
+
+		this.visible = true;
 	}
 
 	public override Gtk.Widget get_display_widget () {
 		if (icon == null) {
 			icon = new IndicatorButton ();
+
 			var image = entry.image as Gtk.Image;
+
 			if (image != null) {
 			    // images holding pixbufs are quite frequently way too large, so we whenever a pixbuf
 			    // is assigned to an image we need to check whether this pixbuf is within reasonable size
@@ -60,9 +82,11 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 
 			    icon.set_widget (IndicatorButton.WidgetSlot.IMAGE, image);
 			}
+
 			var label = entry.label;
 			if (label != null && label is Gtk.Label)
 			    icon.set_widget (IndicatorButton.WidgetSlot.LABEL, label);
+
 			icon.scroll_event.connect (on_scroll);
 			icon.button_press_event.connect (on_button_press);
 		}
@@ -77,28 +101,28 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 	public bool on_button_press (Gdk.EventButton event) {
 	    if (event.button == Gdk.BUTTON_MIDDLE) {
 	        parent_object.secondary_activate (entry, event.time);
-	        return true;
+	        return Gdk.EVENT_STOP;
 	    }
-	    return false;
+	    return Gdk.EVENT_PROPAGATE;
 	}
 
 	public bool on_scroll (Gdk.EventScroll event) {
 		parent_object.entry_scrolled (entry, 1, (IndicatorAyatana.ScrollDirection) event.direction);
-		return false;
+		return Gdk.EVENT_PROPAGATE;
 	}
 
 	int position = 0;
 	public override Gtk.Widget get_widget () {
 		if (main_grid == null) {
 			main_grid = new Gtk.Grid ();
+
 			foreach (var item in entry.menu.get_children ()) {
 				on_menu_widget_insert (item);
 			}
+
 			entry.menu.insert.connect (on_menu_widget_insert);
 			entry.menu.remove.connect (on_menu_widget_remove);
 		}
-
-		this.visible = true;
 
 		return main_grid;
 	}
@@ -132,18 +156,15 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 		return null;
 	}
 
+	// convert the menuitems to widgets that can be shown in popovers
 	private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
+		// menuitem not visible 
 		if (!item.get_visible ()) 
 			return null;
 		// seperator are GTK.SeparatorMenuItem, return a seperator
 		if (item is Gtk.SeparatorMenuItem) {
 			return new Wingpanel.Widgets.IndicatorSeparator ();
 		}
-
-		    // /* enum value as string */
-		    // var enum_class = (EnumClass) item.get_type ().class_ref ();
-		    // string name = enum_class.get_value (Bar.FEE).value_name;
-		    // stdout.printf ("Enum value as string: %s\n", name);
 
 		// all other items are genericmenuitems
 		string label = (item as Gtk.MenuItem).get_label ();
@@ -175,6 +196,7 @@ public class AyanataCompatibility.Indicator : Wingpanel.Indicator {
 			});
 			return button;
 		} 
+		// convert menuitem to a indicatorbutton
 		if (item is Gtk.MenuItem) {
 			Wingpanel.Widgets.IndicatorButton button;
 			if (image != null) {
