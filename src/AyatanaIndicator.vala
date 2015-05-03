@@ -22,7 +22,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
 	private unowned IndicatorAyatana.ObjectEntry entry;
 	private unowned IndicatorAyatana.Object parent_object;
-	private IndicatorIface indicator;	
+	private IndicatorIface indicator;
 	private string entry_name_hint;
 
 	private Gee.HashMap<Gtk.Widget,Gtk.Widget> menu_map;
@@ -158,8 +158,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
 	// convert the menuitems to widgets that can be shown in popovers
 	private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
-		// menuitem not visible 
-		if (!item.get_visible ()) 
+		// menuitem not visible
+		if (!item.get_visible ())
 			return null;
 		// seperator are GTK.SeparatorMenuItem, return a seperator
 		if (item is Gtk.SeparatorMenuItem) {
@@ -190,20 +190,20 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 		if (active) {
 			var button = new Wingpanel.Widgets.IndicatorSwitch (label, active);
 			button.get_switch ().state_set.connect ((b) => {
-				(item as Gtk.CheckMenuItem).set_active (b);				
+				(item as Gtk.CheckMenuItem).set_active (b);
 				close ();
 				return false;
 			});
 			return button;
-		} 
+		}
 		// convert menuitem to a indicatorbutton
 		if (item is Gtk.MenuItem) {
 			Wingpanel.Widgets.IndicatorButton button;
-			if (image != null) {
-				button = new Wingpanel.Widgets.IndicatorButton.with_image (label, image);
+			if (image != null && image.pixbuf != null) {
+				button = new Wingpanel.Widgets.IndicatorButton.with_image (label, image.pixbuf);
 			} else {
 				button = new Wingpanel.Widgets.IndicatorButton (label);
-			}			
+			}
 			button.set_sensitive (sensitive);
 			if (sensitive) {
 				var submenu = (item as Gtk.MenuItem).get_submenu ();
@@ -216,7 +216,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 						close ();
 						item.activate ();
 					});
-				}				
+				}
 			}
 			return button;
 		} else {
@@ -226,11 +226,11 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 	}
 
 	public override void opened () {
-		
+
 	}
 
 	public override void closed () {
-		
+
 	}
 
 	private void ensure_max_size (Gtk.Image image) {
