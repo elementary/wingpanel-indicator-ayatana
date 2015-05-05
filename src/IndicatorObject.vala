@@ -48,7 +48,7 @@ public class AyatanaCompatibility.IndicatorObject : Object, IndicatorIface {
     private void load_entries () {
         List<unowned IndicatorAyatana.ObjectEntry> list = object.get_entries ();
 
-        foreach (var entry in list)            
+        foreach (var entry in list)
             entries.set (entry, create_entry (entry));
     }
 

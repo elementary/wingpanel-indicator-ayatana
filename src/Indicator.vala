@@ -24,10 +24,8 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 				display_name: _("Ayatana Compatibility"),
 				description:_("Ayatana Compatibility Meta Indicator"));
 
-		// should the blacklist be exposed?
-		var black = new string[] {};
-		indicator_loader = new IndicatorFactory (black);
-		
+		indicator_loader = new IndicatorFactory ();
+
 		this.visible = false;
 		var indicators = indicator_loader.get_indicators ();
 
@@ -54,7 +52,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 	}
 
 	private void delete_entry (Indicator indicator) {
-		Wingpanel.IndicatorManager.get_default ().deregister_indicator (indicator);		
+		Wingpanel.IndicatorManager.get_default ().deregister_indicator (indicator);
 	}
 
 	public override Gtk.Widget get_widget () {

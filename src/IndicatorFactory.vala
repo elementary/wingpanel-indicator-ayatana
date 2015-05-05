@@ -17,10 +17,8 @@
 
 public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
     private Gee.Collection<IndicatorIface> indicators;
-    private string[] settings_blacklist;
 
-    public IndicatorFactory (string[] settings_blacklist) {
-        this.settings_blacklist = settings_blacklist;
+    public IndicatorFactory () {
     }
 
     public Gee.Collection<IndicatorIface> get_indicators () {
@@ -41,9 +39,6 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
             return;
         }
 
-        foreach (string blocked_indicator in settings_blacklist)
-            skip_list += "," + blocked_indicator;
-
         // Legacy indicator libraries
         load_indicators_from_dir ("/usr/lib/indicators3/7/", skip_list);//Build.AYANATAINDICATORDIR, true, skip_list);
     }
@@ -57,9 +52,6 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
 
             while ((file_info = enumerator.next_file (null)) != null) {
                 string name = file_info.get_name ();
-
-                if (name in skip_list)
-                    continue;
 
                 load_indicator (dir, name);
             }
@@ -83,6 +75,6 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
             indicators.add (new IndicatorObject (indicator, name));
         else
             debug ("Unable to load %s: invalid object.", name);
-      
+
     }
 }
