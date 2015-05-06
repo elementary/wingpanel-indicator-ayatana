@@ -39,8 +39,7 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
             return;
         }
 
-        // Legacy indicator libraries
-        load_indicators_from_dir ("/usr/lib/indicators3/7/", skip_list);//Build.AYANATAINDICATORDIR, true, skip_list);
+        load_indicators_from_dir (Constants.AYANATAINDICATORDIR, skip_list);
     }
 
     private void load_indicators_from_dir (string dir_path, string skip_list) {

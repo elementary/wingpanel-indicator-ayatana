@@ -1,5 +1,5 @@
 # This a sample CMakeLists.txt for compiling indicatos for Wingpanel
-# http://elementaryos.org/docs/developer-guide/cmake 
+# http://elementaryos.org/docs/developer-guide/cmake
 
 cmake_minimum_required (VERSION 2.6)
 cmake_policy (VERSION 2.6)
@@ -25,8 +25,12 @@ set (INDICATORNAME "${CMAKE_PROJECT_NAME}")
 set (GETTEXT_PACKAGE "${CMAKE_PROJECT_NAME}-indicator")
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+# Find the Indicator Directory
+execute_process (COMMAND ${PKG_CONFIG_EXECUTABLE} indicator3-0.4 --variable=indicatordir OUTPUT_VARIABLE current_indicatordir OUTPUT_STRIP_TRAILING_WHITESPACE)
+set (AYANATAINDICATORDIR ${current_indicatordir})
 # Configure file
-configure_file (${CMAKE_SOURCE_DIR}/config.vala.cmake ${CMAKE_BINARY_DIR}/src/config.vala)
+set (CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CONFIG_FILE})
 add_definitions (-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 
 # Comment this out to enable C compiler warnings

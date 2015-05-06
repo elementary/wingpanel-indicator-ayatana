@@ -48,11 +48,11 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 	}
 
 	private void create_entry (Indicator indicator) {
-	    Wingpanel.IndicatorManager.get_default ().register_indicator (indicator);
+	    Wingpanel.IndicatorManager.get_default ().register_indicator (indicator.code_name, indicator);
 	}
 
 	private void delete_entry (Indicator indicator) {
-		Wingpanel.IndicatorManager.get_default ().deregister_indicator (indicator);
+		Wingpanel.IndicatorManager.get_default ().deregister_indicator (indicator.code_name, indicator);
 	}
 
 	public override Gtk.Widget get_widget () {
