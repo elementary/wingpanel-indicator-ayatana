@@ -31,18 +31,10 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
     }
 
     private void load_indicators () {
-        // Fetch list of indicators that should not be loaded
-        string skip_list = Environment.get_variable ("UNITY_PANEL_INDICATORS_SKIP") ?? "";
-
-        if (skip_list == "all") {
-            warning ("Skipping all indicator loading");
-            return;
-        }
-
-        load_indicators_from_dir (Constants.AYANATAINDICATORDIR, skip_list);
+        load_indicators_from_dir (Constants.AYANATAINDICATORDIR);
     }
 
-    private void load_indicators_from_dir (string dir_path, string skip_list) {
+    private void load_indicators_from_dir (string dir_path) {
         try {
             var dir = File.new_for_path (dir_path);
             var enumerator = dir.enumerate_children (FileAttribute.STANDARD_NAME,
@@ -51,7 +43,6 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
 
             while ((file_info = enumerator.next_file (null)) != null) {
                 string name = file_info.get_name ();
-
                 load_indicator (dir, name);
             }
         } catch (Error err) {
