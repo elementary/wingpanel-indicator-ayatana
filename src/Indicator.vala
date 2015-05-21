@@ -55,7 +55,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 		Wingpanel.IndicatorManager.get_default ().deregister_indicator (indicator.code_name, indicator);
 	}
 
-	public override Gtk.Widget get_widget () {
+	public override Gtk.Widget? get_widget () {
 		return new Gtk.Label ("should not be shown");
 	}
 

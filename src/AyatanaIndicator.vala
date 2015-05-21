@@ -112,7 +112,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 	}
 
 	int position = 0;
-	public override Gtk.Widget get_widget () {
+	public override Gtk.Widget? get_widget () {
 		if (main_grid == null) {
 			main_grid = new Gtk.Grid ();
 
