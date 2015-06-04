@@ -20,6 +20,7 @@ vala_precompile (VALA_C ${CMAKE_PROJECT_NAME}
   IndicatorIface.vala
   IndicatorLoader.vala
   IndicatorButton.vala
+  SubMenuButton.vala
 PACKAGES
   wingpanel-2.0
   granite
