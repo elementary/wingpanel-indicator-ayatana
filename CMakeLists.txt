@@ -11,7 +11,7 @@ set (INDICATORTITLE "Ayatana Compatibility")
 set (INDICATORDESCRIPTION "Ayatana Compatibility plugin")
 
 # Projectname
-project (ayatana_comp)
+project (ayatana_compatibility)
 
 #########################################################
 # Only alter stuff below if you know what you are doing #

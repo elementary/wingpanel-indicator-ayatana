@@ -26,8 +26,8 @@ public class AyatanaCompatibility.SubMenuButton : Gtk.Button {
         var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         box.hexpand = true;
 
-        button_label = new Gtk.Label (Markup.escape_text (caption));
-
+        button_label = new Gtk.Label.with_mnemonic (caption);
+        button_label.set_mnemonic_widget (this);
         button_label.use_markup = true;
         button_label.margin_start = 6;
 
