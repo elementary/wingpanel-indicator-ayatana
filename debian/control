@@ -1,35 +1,33 @@
-Source: wingpanel-indicator-network
+Source: wingpanel-indicator-launcher
 Section: x11
 Priority: optional
 Maintainer: Cody Garver <cody@elementary.io>
 Build-Depends: cmake,
                debhelper (>= 9),
                gobject-introspection,
+               libglib2.0-dev,
                libgranite-dev,
                libgtk-3-dev (>= 3.12),
-               libnm-glib-dev,
-               libnm-gtk-dev,
-               libnm-util-dev,
                libvala-0.28-dev,
                libwingpanel-dev,
                valac (>= 0.28)
 Standards-Version: 3.9.6
-Homepage: https://launchpad.net/wingpanel-indicator-network
+Homepage: https://launchpad.net/wingpanel-indicator-launcher
 
-Package: wingpanel-indicator-network
+Package: wingpanel-indicator-launcher
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Enhances: wingpanel
-Description: WingPanel Network Indicator
- WingPanel Network Indicator
+Description: WingPanel Launcher Indicator
+ WingPanel Launcher Indicator
 
-Package: wingpanel-indicator-network-dbg
+Package: wingpanel-indicator-launcher-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: wingpanel-indicator-network (= ${binary:Version}), ${misc:Depends}
-Enhances: wingpanel-indicator-network
-Description: WingPanel Network Indicator (debugging symbols)
- WingPanel Network Indicator
+Depends: wingpanel-indicator-launcher (= ${binary:Version}), ${misc:Depends}
+Enhances: wingpanel-indicator-launcher
+Description: WingPanel Launcher Indicator (debugging symbols)
+ WingPanel Launcher Indicator
  .
- This package contains debugging symbols for wingpanel-indicator-network.
+ This package contains debugging symbols for wingpanel-indicator-launcher.
