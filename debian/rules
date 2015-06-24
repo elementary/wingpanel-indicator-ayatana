@@ -16,4 +16,4 @@ override_dh_install:
 	dh_install --fail-missing
 
 override_dh_strip:
-        dh_strip --dbg-package=wingpanel-indicator-launcher-dbg
+        dh_strip --dbg-package=wingpanel-indicator-ayatana-dbg

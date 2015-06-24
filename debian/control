@@ -1,4 +1,4 @@
-Source: wingpanel-indicator-launcher
+Source: wingpanel-indicator-ayatana
 Section: x11
 Priority: optional
 Maintainer: Cody Garver <cody@elementary.io>
@@ -12,22 +12,22 @@ Build-Depends: cmake,
                libwingpanel-dev,
                valac (>= 0.28)
 Standards-Version: 3.9.6
-Homepage: https://launchpad.net/wingpanel-indicator-launcher
+Homepage: https://launchpad.net/wingpanel-indicator-ayatana
 
-Package: wingpanel-indicator-launcher
+Package: wingpanel-indicator-ayatana
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Enhances: wingpanel
-Description: WingPanel Launcher Indicator
- WingPanel Launcher Indicator
+Description: WingPanel Ayatana Indicator
+ WingPanel Ayatana Indicator
 
-Package: wingpanel-indicator-launcher-dbg
+Package: wingpanel-indicator-ayatana-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: wingpanel-indicator-launcher (= ${binary:Version}), ${misc:Depends}
-Enhances: wingpanel-indicator-launcher
-Description: WingPanel Launcher Indicator (debugging symbols)
- WingPanel Launcher Indicator
+Depends: wingpanel-indicator-ayatana (= ${binary:Version}), ${misc:Depends}
+Enhances: wingpanel-indicator-ayatana
+Description: WingPanel Ayatana Indicator (debugging symbols)
+ WingPanel Ayatana Indicator
  .
- This package contains debugging symbols for wingpanel-indicator-launcher.
+ This package contains debugging symbols for wingpanel-indicator-ayatana.
