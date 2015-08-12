@@ -1,18 +1,20 @@
-/*-
- * Copyright (c) 2015 Wingpanel Developers (http://launchpad.net/wingpanel)
+/*
+ * Copyright (c) 2011-2015 Wingpanel Developers (http://launchpad.net/wingpanel)
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation, either version 2.1 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
@@ -49,13 +51,16 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
 
         if (entry.menu == null) {
             critical ("Indicator: %s has no menu widget.", entry_name_hint);
+
             return;
         }
 
-        // Workaround for buggy indicators: this menu may still be part of
-        // another panel entry which hasn't been destroyed yet. Those indicators
-        // trigger entry-removed after entry-added, which means that the previous
-        // parent is still in the panel when the new one is added.
+        /*
+         * Workaround for buggy indicators: this menu may still be part of
+         * another panel entry which hasn't been destroyed yet. Those indicators
+         * trigger entry-removed after entry-added, which means that the previous
+         * parent is still in the panel when the new one is added.
+         */
         if (entry.menu.get_attach_widget () != null) {
             entry.menu.detach ();
         }
@@ -70,8 +75,10 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             var image = entry.image as Gtk.Image;
 
             if (image != null) {
-                // images holding pixbufs are quite frequently way too large, so we whenever a pixbuf
-                // is assigned to an image we need to check whether this pixbuf is within reasonable size
+                /*
+                 * images holding pixbufs are quite frequently way too large, so we whenever a pixbuf
+                 * is assigned to an image we need to check whether this pixbuf is within reasonable size
+                 */
                 if (image.storage_type == Gtk.ImageType.PIXBUF) {
                     image.notify["pixbuf"].connect (() => {
                         ensure_max_size (image);
@@ -105,6 +112,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     public bool on_button_press (Gdk.EventButton event) {
         if (event.button == Gdk.BUTTON_MIDDLE) {
             parent_object.secondary_activate (entry, event.time);
+
             return Gdk.EVENT_STOP;
         }
 
@@ -112,22 +120,33 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     }
 
     public bool on_scroll (Gdk.EventScroll event) {
-        parent_object.entry_scrolled (entry, 1, (IndicatorAyatana.ScrollDirection) event.direction);
+        parent_object.entry_scrolled (entry, 1, (IndicatorAyatana.ScrollDirection)event.direction);
+
         return Gdk.EVENT_PROPAGATE;
     }
 
     int position = 0;
     public override Gtk.Widget? get_widget () {
         if (main_stack == null) {
-            main_stack = new Gtk.Stack ();
-            main_stack.show.connect (() => {
-                main_stack.set_visible_child (main_grid);
-                if (entry.menu.get_children ().length () == 0) {
-                    // workaround for indicators (e.g. dropbox) that only have menu children after
-                    // the menu is popuped once
+            bool reloaded = false;
+            icon.parent.parent.enter_notify_event.connect ((w, e) => {
+                if (!reloaded) {
+                    /*
+                     * workaround for indicators (e.g. dropbox) that only update menu children after
+                     * the menu is popuped
+                     */
+                    reloaded = true;
                     entry.menu.popup (null, null, null, 0, Gtk.get_current_event_time ());
                     entry.menu.popdown ();
                 }
+
+                return Gdk.EVENT_PROPAGATE;
+            });
+
+            main_stack = new Gtk.Stack ();
+            main_stack.map.connect (() => {
+                main_stack.set_visible_child (main_grid);
+                reloaded = false;
             });
             main_grid = new Gtk.Grid ();
             main_stack.add (main_grid);
@@ -174,24 +193,26 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         return null;
     }
 
-    // convert the menuitems to widgets that can be shown in popovers
+    /* convert the menuitems to widgets that can be shown in popovers */
     private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
-        // menuitem not visible
+        /* menuitem not visible */
         if (!item.get_visible ()) {
             return null;
         }
 
-        // seperator are GTK.SeparatorMenuItem, return a separator
+        /* seperator are GTK.SeparatorMenuItem, return a separator */
         if (item is Gtk.SeparatorMenuItem) {
             return new Wingpanel.Widgets.Separator ();
         }
 
-        // all other items are genericmenuitems
+        /* all other items are genericmenuitems */
         string label = (item as Gtk.MenuItem).get_label ();
         label = label.replace ("_", "");
 
-        // get item type from atk accessibility
-        // 34 = MENU_ITEM  8 = CHECKBOX  32 = SUBMENU 44 = RADIO
+        /*
+         * get item type from atk accessibility
+         * 34 = MENU_ITEM  8 = CHECKBOX  32 = SUBMENU 44 = RADIO
+         */
         var atk = item.get_accessible ();
         Value val = Value (typeof (int));
         atk.get_property ("accessible_role", ref val);
@@ -200,7 +221,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         var sensitive = item.get_sensitive ();
         var active = (item as Gtk.CheckMenuItem).get_active ();
 
-        // detect if it has a image
+        /* detect if it has a image */
         Gtk.Image? image = null;
         var child = (item as Gtk.Bin).get_child ();
 
@@ -217,12 +238,14 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             button.get_switch ().state_set.connect ((b) => {
                 (item as Gtk.CheckMenuItem).set_active (b);
                 close ();
+
                 return false;
             });
+
             return button;
         }
 
-        // convert menuitem to a indicatorbutton
+        /* convert menuitem to a indicatorbutton */
         if (item is Gtk.MenuItem) {
             Gtk.Button button;
 
@@ -261,6 +284,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                     submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
                     submenu.insert.connect ((sub_item) => {
                         var sub_menu_item = convert_menu_widget (sub_item);
+
                         if (sub_menu_item != null) {
                             sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
                         }
@@ -287,18 +311,16 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     }
 
     public override void opened () {
-
     }
 
     public override void closed () {
-
     }
 
     private void ensure_max_size (Gtk.Image image) {
         var pixbuf = image.pixbuf;
 
         if (pixbuf != null && pixbuf.get_height () > MAX_ICON_SIZE) {
-            image.pixbuf = pixbuf.scale_simple ((int) ((double) MAX_ICON_SIZE / pixbuf.get_height () * pixbuf.get_width ()),
+            image.pixbuf = pixbuf.scale_simple ((int)((double)MAX_ICON_SIZE / pixbuf.get_height () * pixbuf.get_width ()),
                                                 MAX_ICON_SIZE, Gdk.InterpType.HYPER);
         }
     }
