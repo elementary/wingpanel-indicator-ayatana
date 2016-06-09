@@ -259,7 +259,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             }
 
             if (image != null && image.pixbuf != null) {
-                button = new Wingpanel.Widgets.Button (label, image.pixbuf);
+                button = new Wingpanel.Widgets.Button (label);
+                (button as Wingpanel.Widgets.Button).set_pixbuf (image.pixbuf);
             } else {
                 button = new Wingpanel.Widgets.Button (label);
             }
