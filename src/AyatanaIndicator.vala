@@ -33,25 +33,23 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     const int MAX_ICON_SIZE = 24;
 
     public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
-        Object (code_name: "%s%s".printf ("ayatana-", entry.name_hint),
-                display_name: "%s%s".printf ("ayatana-", entry.name_hint),
+        string name_hint = entry.name_hint;
+        if (name_hint == null) {
+            var rand = new GLib.Rand ();
+            name_hint = rand.next_int ().to_string ();
+        }
+
+        Object (code_name: "%s%s".printf ("ayatana-", name_hint),
+                display_name: "%s%s".printf ("ayatana-", name_hint),
                 description: _("Ayatana compatibility indicator"));
         this.entry = entry;
         this.indicator = indicator;
         this.parent_object = obj;
         this.menu_map = new Gee.HashMap<Gtk.Widget, Gtk.Widget> ();
-
-        unowned string name_hint = entry.name_hint;
-
-        if (name_hint == null) {
-            warning ("NULL name hint");
-        }
-
-        entry_name_hint = name_hint != null ? name_hint.dup () : "";
+        entry_name_hint = name_hint;
 
         if (entry.menu == null) {
             critical ("Indicator: %s has no menu widget.", entry_name_hint);
-
             return;
         }
 
