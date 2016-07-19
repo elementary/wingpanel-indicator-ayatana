@@ -35,8 +35,8 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
     public Indicator (IndicatorAyatana.ObjectEntry entry, IndicatorAyatana.Object obj, IndicatorIface indicator) {
         string name_hint = entry.name_hint;
         if (name_hint == null) {
-            var rand = new GLib.Rand ();
-            name_hint = rand.next_int ().to_string ();
+            var current_time = new DateTime.now_local ();
+            name_hint = current_time.hash ().to_string ();
         }
 
         Object (code_name: "%s%s".printf ("ayatana-", name_hint),
