@@ -166,7 +166,13 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         if (w != null) {
             menu_map.set (item, w);
             main_grid.attach (w, 0, position++, 1, 1);
-            w.show ();
+            /* menuitem not visible */
+            if (!item.get_visible ()) {
+                w.no_show_all = true;
+                w.hide ();
+            } else {
+                w.show ();
+            }
         }
     }
 
@@ -191,16 +197,29 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         return null;
     }
 
+    private void connect_signals (Gtk.Widget item, Gtk.Widget button) {
+        item.show.connect (() => {
+            button.no_show_all = false;
+            button.show ();
+        });
+        item.hide.connect (() => {
+            button.no_show_all = true;
+            button.hide ();
+        });
+        item.state_changed.connect ((type) => {
+            button.set_state (item.get_state ());
+        });
+    }
+
     /* convert the menuitems to widgets that can be shown in popovers */
     private Gtk.Widget? convert_menu_widget (Gtk.Widget item) {
-        /* menuitem not visible */
-        if (!item.get_visible ()) {
-            return null;
-        }
-
         /* seperator are GTK.SeparatorMenuItem, return a separator */
         if (item is Gtk.SeparatorMenuItem) {
-            return new Wingpanel.Widgets.Separator ();
+            var seperator =  new Wingpanel.Widgets.Separator ();
+
+            connect_signals (item, seperator);
+
+            return seperator;
         }
 
         /* all other items are genericmenuitems */
@@ -216,7 +235,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         atk.get_property ("accessible_role", ref val);
         var item_type = val.get_int ();
 
-        var sensitive = item.get_sensitive ();
+        var state = item.get_state ();
         var active = (item as Gtk.CheckMenuItem).get_active ();
 
         /* detect if it has a image */
@@ -238,6 +257,12 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 close ();
 
                 return false;
+            });
+            button.set_state (state);
+
+            connect_signals (item, button);
+            (item as Gtk.CheckMenuItem).toggled.connect (() => {
+                button.set_active ((item as Gtk.CheckMenuItem).get_active ());
             });
 
             return button;
@@ -263,45 +288,47 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
                 button = new Wingpanel.Widgets.Button (label);
             }
 
-            button.set_sensitive (sensitive);
+            button.set_state (state);
 
-            if (sensitive) {
-                var submenu = (item as Gtk.MenuItem).submenu;
+            var submenu = (item as Gtk.MenuItem).submenu;
 
-                if (submenu != null) {
-                    int pos = 0;
-                    var scroll_sub = new Gtk.ScrolledWindow (null, null);
-                    scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-                    var sub_stack = new Gtk.Grid ();
-                    scroll_sub.add (sub_stack);
-                    var w = new Wingpanel.Widgets.Button (_("Back"));
-                    w.clicked.connect (() => {
-                        main_stack.set_visible_child (main_grid);
-                    });
-                    sub_stack.attach (w, 0, pos++, 1, 1);
-                    sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
-                    submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
-                    submenu.insert.connect ((sub_item) => {
-                        var sub_menu_item = convert_menu_widget (sub_item);
+            if (submenu != null) {
+                int pos = 0;
+                var scroll_sub = new Gtk.ScrolledWindow (null, null);
+                scroll_sub.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+                var sub_stack = new Gtk.Grid ();
+                scroll_sub.add (sub_stack);
+                var back_button = new Wingpanel.Widgets.Button (_("Back"));
+                back_button.clicked.connect (() => {
+                    main_stack.set_visible_child (main_grid);
+                });
+                sub_stack.attach (back_button, 0, pos++, 1, 1);
+                sub_stack.attach (new Wingpanel.Widgets.Separator (), 0, pos++, 1, 1);
+                submenu.popup (null, null, null, 0, Gtk.get_current_event_time ());
+                submenu.insert.connect ((sub_item) => {
+                    var sub_menu_item = convert_menu_widget (sub_item);
 
-                        if (sub_menu_item != null) {
-                            sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
-                        }
-                    });
-                    submenu.popdown ();
-                    main_stack.add (scroll_sub);
-                    button = new SubMenuButton (label);
-                    button.clicked.connect (() => {
-                        main_stack.set_visible_child (scroll_sub);
-                        main_stack.show_all ();
-                    });
-                } else {
-                    button.clicked.connect (() => {
-                        close ();
-                        item.activate ();
-                    });
-                }
+                    if (sub_menu_item != null) {
+
+                        connect_signals (sub_item, sub_menu_item);
+                        sub_stack.attach (sub_menu_item, 0, pos++, 1, 1);
+                    }
+                });
+                submenu.popdown ();
+                main_stack.add (scroll_sub);
+                button = new SubMenuButton (label);
+                button.clicked.connect (() => {
+                    main_stack.set_visible_child (scroll_sub);
+                    main_stack.show_all ();
+                });
+            } else {
+                button.clicked.connect (() => {
+                    close ();
+                    item.activate ();
+                });
             }
+
+            connect_signals (item, button);
 
             return button;
         }
