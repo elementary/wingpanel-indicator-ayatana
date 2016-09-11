@@ -24,39 +24,19 @@ public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
     public Gee.Collection<IndicatorIface> get_indicators () {
         if (indicators == null) {
             indicators = new Gee.LinkedList<IndicatorIface> ();
-            load_indicators ();
+            load_indicator (File.new_for_path (Constants.AYANATAINDICATORDIR), "libapplication.so");
         }
 
         return indicators.read_only_view;
     }
 
-    private void load_indicators () {
-        load_indicators_from_dir (Constants.AYANATAINDICATORDIR);
-    }
-
-    private void load_indicators_from_dir (string dir_path) {
-        try {
-            var dir = File.new_for_path (dir_path);
-            var enumerator = dir.enumerate_children (FileAttribute.STANDARD_NAME,
-                                                     FileQueryInfoFlags.NONE, null);
-            FileInfo file_info;
-
-            while ((file_info = enumerator.next_file (null)) != null) {
-                string name = file_info.get_name ();
-                load_indicator (dir, name);
-            }
-        } catch (Error err) {
-            warning ("Unable to read indicators: %s", err.message);
-        }
-    }
-
     private void load_indicator (File parent_dir, string name) {
         string indicator_path = parent_dir.get_child (name).get_path ();
-
-        IndicatorAyatana.Object indicator = null;
-
-        if (!name.has_suffix (".so"))
+        if (!File.new_for_path (indicator_path).query_exists ()) {
+            debug ("No ayatana support possible because there is no Indicator Library: %s", name);
             return;
+        }
+        IndicatorAyatana.Object indicator = null;
 
         debug ("Loading Indicator Library: %s", name);
         indicator = new IndicatorAyatana.Object.from_file (indicator_path);
