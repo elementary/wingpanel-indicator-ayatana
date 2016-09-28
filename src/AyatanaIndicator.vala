@@ -287,6 +287,9 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
             } else {
                 button = new Wingpanel.Widgets.Button (label);
             }
+            (item as Gtk.CheckMenuItem).notify["label"].connect (() => {
+                (button as Wingpanel.Widgets.Button).set_caption ((item as Gtk.MenuItem).get_label ().replace ("_", ""));
+            });
 
             button.set_state (state);
 
