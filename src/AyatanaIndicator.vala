@@ -128,7 +128,7 @@ public class AyatanaCompatibility.Indicator : Wingpanel.Indicator {
         if (main_stack == null) {
             bool reloaded = false;
             icon.parent.parent.enter_notify_event.connect ((w, e) => {
-                if (!reloaded) {
+                if (!reloaded && e.mode != Gdk.CrossingMode.TOUCH_BEGIN) {
                     /*
                      * workaround for indicators (e.g. dropbox) that only update menu children after
                      * the menu is popuped
