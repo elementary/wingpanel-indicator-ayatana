@@ -23,6 +23,7 @@ set (DATADIR "${CMAKE_INSTALL_FULL_LIBDIR}/wingpanel")
 set (PKGDATADIR "${DATADIR}")
 set (INDICATORNAME "${CMAKE_PROJECT_NAME}")
 set (GETTEXT_PACKAGE "${CMAKE_PROJECT_NAME}-indicator")
+set (VERSION "2.0.3")
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package (PkgConfig)
