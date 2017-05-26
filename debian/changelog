@@ -1,3 +1,9 @@
+wingpanel-indicator-ayatana (2.0.3) xenial; urgency=medium
+
+  * New upstream release.
+
+ -- Cody Garver <cody@elementary.io>  Fri, 26 May 2017 16:30:35 -0500
+
 wingpanel-indicator-ayatana (2.0.2) xenial; urgency=medium
 
   * New upstream release.
